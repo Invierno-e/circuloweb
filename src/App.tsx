@@ -9,7 +9,8 @@ import {
   Twitter,
   Plus,
   ArrowUpRight,
-  X
+  X,
+  Menu
 } from 'lucide-react';
 import { cn } from './lib/utils';
 
@@ -98,6 +99,7 @@ const Modal = ({ project, onClose }: { project: Project | null, onClose: () => v
 
 const Navbar = () => {
   const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
     { name: 'Inicio', path: '/' },
@@ -109,9 +111,9 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 border-b-4 border-black bg-white">
       <div className="flex items-stretch h-16 md:h-20">
-        <Link to="/" className="flex items-center px-6 border-r-4 border-black bg-brutal-green hover:bg-black hover:text-brutal-green transition-colors group">
-          <Wind className="w-8 h-8 group-hover:rotate-180 transition-transform duration-500" />
-          <span className="ml-3 font-display text-2xl md:text-3xl uppercase tracking-tighter">
+        <Link to="/" className="flex items-center px-4 md:px-6 border-r-4 border-black bg-brutal-green hover:bg-black hover:text-brutal-green transition-colors group shrink-0">
+          <Wind className="w-6 h-6 md:w-8 md:h-8 group-hover:rotate-180 transition-transform duration-500" />
+          <span className="ml-2 md:ml-3 font-display text-xl md:text-3xl uppercase tracking-tighter">
             Círculo Invierno
           </span>
         </Link>
@@ -131,12 +133,43 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div className="flex-1 flex items-center justify-end px-6 md:hidden">
-          <Link to="/contacto" className="p-2 border-4 border-black bg-brutal-pink">
-            <Mail />
-          </Link>
+        <div className="flex-1 flex items-center justify-end px-4 md:px-6 md:hidden">
+          <button 
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="p-2 border-4 border-black bg-brutal-pink brutal-shadow active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+          >
+            {isMenuOpen ? <X /> : <Menu />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-full left-0 w-full bg-white border-b-4 border-black md:hidden"
+          >
+            <div className="flex flex-col">
+              {navLinks.map((link) => (
+                <Link 
+                  key={link.path} 
+                  to={link.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={cn(
+                    "p-6 border-b-4 border-black font-display text-3xl uppercase tracking-tighter last:border-b-0",
+                    location.pathname === link.path ? "bg-black text-white" : "hover:bg-brutal-celeste"
+                  )}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
@@ -213,22 +246,22 @@ const HomePage = () => {
     <div className="pt-16 md:pt-20">
       {/* Hero Section */}
       <section className="min-h-[90vh] grid grid-cols-1 lg:grid-cols-12 border-b-4 border-black">
-        <div className="lg:col-span-8 p-10 md:p-20 flex flex-col justify-center border-b-4 lg:border-b-0 lg:border-r-4 border-black bg-brutal-white">
+        <div className="lg:col-span-8 p-6 md:p-20 flex flex-col justify-center border-b-4 lg:border-b-0 lg:border-r-4 border-black bg-brutal-white">
           <motion.h1 
             initial={{ x: -100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className="font-display text-[15vw] md:text-[12vw] leading-[0.8] uppercase tracking-tighter mb-12"
+            className="font-display text-[18vw] sm:text-[15vw] md:text-[12vw] lg:text-[10vw] leading-[0.8] uppercase tracking-tighter mb-8 md:mb-12"
           >
             Ilustraciones <br />
             <span className="text-brutal-pink">&</span> Experimentos
           </motion.h1>
-          <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-            <p className="font-mono text-lg md:text-xl font-bold uppercase max-w-md">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
+            <p className="font-mono text-base md:text-xl font-bold uppercase max-w-md">
               Explorando los límites de la estética digital a través del caos controlado.
             </p>
             <Link 
               to="/galeria" 
-              className="brutal-border bg-brutal-green px-10 py-5 font-display text-2xl uppercase tracking-tighter hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+              className="w-full md:w-auto text-center brutal-border bg-brutal-green px-10 py-5 font-display text-2xl uppercase tracking-tighter hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
             >
               Explorar
             </Link>
@@ -284,12 +317,12 @@ const HomePage = () => {
       </section>
 
       <section className="p-10 md:p-20 bg-brutal-celeste border-b-4 border-black text-center">
-        <h2 className="font-display text-7xl md:text-9xl uppercase tracking-tighter leading-none mb-12">
+        <h2 className="font-display text-5xl md:text-7xl lg:text-9xl uppercase tracking-tighter leading-none mb-8 md:mb-12">
           ¿Listo para <br /> experimentar?
         </h2>
         <Link 
           to="/contacto" 
-          className="inline-block brutal-border bg-white px-16 py-8 font-display text-4xl uppercase tracking-tighter hover:bg-black hover:text-white transition-all"
+          className="inline-block w-full md:w-auto brutal-border bg-white px-10 md:px-16 py-6 md:py-8 font-display text-2xl md:text-4xl uppercase tracking-tighter hover:bg-black hover:text-white transition-all"
         >
           Contáctanos
         </Link>
@@ -316,15 +349,15 @@ const GalleryPage = () => {
 
   return (
     <div className="pt-20">
-      <div className="p-10 md:p-20 border-b-4 border-black bg-brutal-green">
-        <h1 className="font-display text-[15vw] leading-none uppercase tracking-tighter">Galería</h1>
-        <div className="mt-12 flex flex-wrap gap-4">
+      <div className="p-6 md:p-20 border-b-4 border-black bg-brutal-green">
+        <h1 className="font-display text-[18vw] md:text-[15vw] leading-none uppercase tracking-tighter">Galería</h1>
+        <div className="mt-8 md:mt-12 flex flex-wrap gap-3 md:gap-4">
           {categories.map(cat => (
             <button 
               key={cat}
               onClick={() => setActiveTab(cat)}
               className={cn(
-                "px-8 py-4 brutal-shadow font-display text-xl uppercase tracking-tighter transition-all",
+                "px-4 md:px-8 py-2 md:py-4 brutal-shadow font-display text-lg md:text-xl uppercase tracking-tighter transition-all",
                 activeTab === cat ? "bg-black text-white" : "bg-white hover:bg-brutal-pink"
               )}
             >
@@ -372,79 +405,133 @@ const GalleryPage = () => {
 };
 
 const ExperimentsPage = () => {
+  const fanzines = [
+    { id: 1, title: "Fanzine #01", img: "https://picsum.photos/seed/fz1/600/800", link: "#" },
+    { id: 2, title: "Fanzine #02", img: "https://picsum.photos/seed/fz2/600/800", link: "#" },
+    { id: 3, title: "Fanzine #03", img: "https://picsum.photos/seed/fz3/600/800", link: "#" },
+    { id: 4, title: "Fanzine #04", img: "https://picsum.photos/seed/fz4/600/800", link: "#" },
+    { id: 5, title: "Fanzine #05", img: "https://picsum.photos/seed/fz5/600/800", link: "#" },
+    { id: 6, title: "Fanzine #06", img: "https://picsum.photos/seed/fz6/600/800", link: "#" },
+  ];
+
+  const analogExperiments = [
+    { id: 1, title: "Collage Analógico", description: "Recortes y texturas físicas.", img: "https://picsum.photos/seed/an1/800/800", color: "bg-brutal-pink" },
+    { id: 2, title: "Grabado Experimental", description: "Técnicas mixtas sobre papel.", img: "https://picsum.photos/seed/an2/800/800", color: "bg-brutal-celeste" },
+  ];
+
   return (
     <div className="pt-20">
-      <div className="p-10 md:p-20 border-b-4 border-black bg-brutal-yellow">
-        <h1 className="font-display text-[12vw] leading-none uppercase tracking-tighter">Experimentos</h1>
+      {/* Fanzines Section */}
+      <div className="p-6 md:p-20 border-b-4 border-black bg-brutal-yellow">
+        <h1 className="font-display text-[18vw] md:text-[12vw] leading-none uppercase tracking-tighter">Fanzines</h1>
+        <p className="font-mono text-lg md:text-xl font-bold uppercase mt-6 md:mt-8 max-w-2xl">
+          Publicaciones independientes y autoeditadas. Una colección de 6 fanzines realizados hasta la fecha.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 border-b-4 border-black">
+        {fanzines.map((fz, idx) => (
+          <a 
+            key={fz.id} 
+            href={fz.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "p-8 border-b-4 border-black group hover:bg-black hover:text-white transition-all",
+              idx % 3 !== 2 && "lg:border-r-4",
+              idx % 2 !== 1 && "md:border-r-4 lg:border-r-4"
+            )}
+          >
+            <div className="aspect-[3/4] brutal-border overflow-hidden mb-6 bg-white">
+              <img 
+                src={fz.img} 
+                alt={fz.title} 
+                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <h3 className="font-display text-3xl uppercase tracking-tighter">{fz.title}</h3>
+              <ArrowUpRight size={32} />
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* Analog Experiments Section */}
+      <div className="p-6 md:p-20 border-b-4 border-black bg-brutal-green">
+        <h1 className="font-display text-[18vw] md:text-[12vw] leading-none uppercase tracking-tighter">Experimentos</h1>
+        <p className="font-mono text-lg md:text-xl font-bold uppercase mt-6 md:mt-8 max-w-2xl">
+          Trabajos análogos y exploraciones físicas de la forma y el color.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2">
-        <div className="p-10 md:p-20 border-b-4 lg:border-b-0 lg:border-r-4 border-black bg-brutal-pink flex flex-col justify-between">
-          <div>
-            <span className="font-mono text-xl font-bold uppercase mb-8 block">Exp #001</span>
-            <h2 className="font-display text-6xl md:text-8xl uppercase tracking-tighter leading-none mb-12">
-              Feedback <br /> Visual
-            </h2>
-            <p className="font-mono text-lg font-bold uppercase max-w-md mb-12">
-              Un bucle infinito de distorsión digital. Captura de pantalla recursiva procesada por filtros de ruido.
-            </p>
+        {analogExperiments.map((exp, idx) => (
+          <div 
+            key={exp.id}
+            className={cn(
+              "p-10 md:p-20 border-b-4 lg:border-b-0 border-black flex flex-col justify-between",
+              idx === 0 && "lg:border-r-4",
+              exp.color
+            )}
+          >
+            <div>
+              <span className="font-mono text-xl font-bold uppercase mb-8 block">Exp #00{exp.id}</span>
+              <h2 className="font-display text-6xl md:text-8xl uppercase tracking-tighter leading-none mb-12">
+                {exp.title}
+              </h2>
+              <p className="font-mono text-lg font-bold uppercase max-w-md mb-12">
+                {exp.description}
+              </p>
+            </div>
+            <div className="aspect-video brutal-border overflow-hidden bg-white">
+              <img 
+                src={exp.img} 
+                alt={exp.title} 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
           </div>
-          <button className="brutal-border bg-white p-8 font-display text-3xl uppercase tracking-tighter hover:bg-black hover:text-white transition-all">
-            Ejecutar
-          </button>
-        </div>
-        
-        <div className="p-10 md:p-20 bg-brutal-celeste flex flex-col justify-between border-b-4 lg:border-b-0 border-black">
-          <div>
-            <span className="font-mono text-xl font-bold uppercase mb-8 block">Exp #002</span>
-            <h2 className="font-display text-6xl md:text-8xl uppercase tracking-tighter leading-none mb-12">
-              Tipografía <br /> Líquida
-            </h2>
-            <p className="font-mono text-lg font-bold uppercase max-w-md mb-12">
-              Letras que se deforman según la frecuencia del sonido ambiente. Un experimento de sinestesia digital.
-            </p>
-          </div>
-          <button className="brutal-border bg-brutal-green p-8 font-display text-3xl uppercase tracking-tighter hover:bg-black hover:text-white transition-all">
-            Ejecutar
-          </button>
-        </div>
+        ))}
       </div>
 
-      <Marquee text="Innovación o Muerte" color="bg-black text-white" />
+      <Marquee text="Círculo Invierno" color="bg-black text-white" />
     </div>
   );
 };
 
 const ContactPage = () => {
   return (
-    <div className="pt-20">
+    <div className="pt-16 md:pt-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[80vh]">
-        <div className="p-10 md:p-20 border-b-4 lg:border-b-0 lg:border-r-4 border-black flex flex-col justify-center bg-brutal-white">
-          <h1 className="font-display text-[10vw] leading-none uppercase tracking-tighter mb-12">
+        <div className="p-6 md:p-20 border-b-4 lg:border-b-0 lg:border-r-4 border-black flex flex-col justify-center bg-brutal-white">
+          <h1 className="font-display text-[18vw] md:text-[10vw] leading-none uppercase tracking-tighter mb-8 md:mb-12">
             Hablemos <br /> de Caos
           </h1>
-          <div className="space-y-8 font-mono text-xl font-bold uppercase">
-            <p>hola@circuloinvierno.com</p>
+          <div className="space-y-4 md:space-y-8 font-mono text-lg md:text-xl font-bold uppercase">
+            <p className="break-all">hola@circuloinvierno.com</p>
             <p>+56 9 1234 5678</p>
             <p>Santiago, CL</p>
           </div>
         </div>
 
-        <div className="p-10 md:p-20 bg-brutal-yellow flex flex-col justify-center">
-          <form className="space-y-6">
+        <div className="p-6 md:p-20 bg-brutal-yellow flex flex-col justify-center">
+          <form className="space-y-4 md:space-y-6">
             <div className="space-y-2">
               <label className="font-mono text-xs font-bold uppercase">Nombre</label>
-              <input type="text" className="w-full bg-white border-4 border-black p-4 font-mono outline-none focus:bg-brutal-pink transition-colors" />
+              <input type="text" className="w-full bg-white border-4 border-black p-3 md:p-4 font-mono outline-none focus:bg-brutal-pink transition-colors" />
             </div>
             <div className="space-y-2">
               <label className="font-mono text-xs font-bold uppercase">Email</label>
-              <input type="email" className="w-full bg-white border-4 border-black p-4 font-mono outline-none focus:bg-brutal-pink transition-colors" />
+              <input type="email" className="w-full bg-white border-4 border-black p-3 md:p-4 font-mono outline-none focus:bg-brutal-pink transition-colors" />
             </div>
             <div className="space-y-2">
               <label className="font-mono text-xs font-bold uppercase">Mensaje</label>
-              <textarea rows={4} className="w-full bg-white border-4 border-black p-4 font-mono outline-none focus:bg-brutal-pink transition-colors resize-none" />
+              <textarea rows={4} className="w-full bg-white border-4 border-black p-3 md:p-4 font-mono outline-none focus:bg-brutal-pink transition-colors resize-none" />
             </div>
-            <button className="w-full brutal-border bg-black text-white py-6 font-display text-3xl uppercase tracking-tighter hover:bg-white hover:text-black transition-all">
+            <button className="w-full brutal-border bg-black text-white py-4 md:py-6 font-display text-2xl md:text-3xl uppercase tracking-tighter hover:bg-white hover:text-black transition-all">
               Enviar
             </button>
           </form>
